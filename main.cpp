@@ -32,14 +32,15 @@ int main(int argc, char *argv[]) {
             cout << "Can't open database" << endl;
             return 1;
         }
+        work W(C);
+        W.exec(readFile("drop_tables.txt"));
+        W.commit();
+        C.disconnect();
     }
     catch (const std::exception &e) {
         cerr << e.what() << std::endl;
         return 1;
     }
 
-    work W(C);
-    W.exec(readFile("drop_tables.txt"));
-    W.commit();
-    C.disconnect();
+
 }
