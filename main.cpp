@@ -18,11 +18,11 @@ string readFile(string name) {
 }
 
 int main(int argc, char *argv[]) {
-    char dbname = "bd";
-    char user = "ms383504";
-    char password = "x";
-    char hostadrr = "127.0.0.1";
-    char port = "5432";
+    string  dbname = "bd";
+    string user = "ms383504";
+    string password = "x";
+    string hostadrr = "127.0.0.1";
+    string port = "5432";
     try {
         connection C("dbname = " + dbname + " user = " + user + " password = " + password + " hostaddr = " + hostadrr +
                      " port = " + port);
