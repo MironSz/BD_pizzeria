@@ -9,8 +9,7 @@ string readFile(string name) {
     t.open(name);
     std::string buffer;
     std::string line;
-    while(line){
-        std::getline(t, line);
+    while( std::getline(t, line)){
         buffer+=line;
     }
     t.close();
