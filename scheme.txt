@@ -1,0 +1,81 @@
+CREATE TABLE Pizze(
+  id_pizzy SERIAL,
+  nazwa_pizzy varchar(255) NOT NULL UNIQUE,
+  cena FLOAT(10) NOT NULL,
+  PRIMARY KEY (id_pizzy)
+  );
+
+CREATE TABLE Skladniki(
+  id_skladnika SERIAL,
+  ilosc int NOT NULL,
+  PRIMARY KEY (id_skladnika)
+  );
+
+CREATE TABLE PolaczeniePizzaSkladnik(
+  id_skladnika int NOT NULL,
+  id_pizzy int NOT NULL,
+  ilosc int NOT NULL,
+  FOREIGN KEY (id_skladnika) REFERENCES Skladniki(id_skladnika),
+  FOREIGN KEY (id_pizzy) REFERENCES Pizze(id_pizzy)
+  );
+
+CREATE TABLE Klient(
+  id_klienta SERIAL,
+  opcja_polityczna varchar(255),
+  PRIMARY KEY(id_klienta)
+  );
+
+CREATE TABLE Zamowienie(
+  id_zamowienia SERIAL,
+  id_klienta int NOT NULL,
+  data_zamówienia date,
+  udane boolean,
+  PRIMARY KEY(id_zamowienia),
+  FOREIGN KEY (id_klienta) REFERENCES Klient(id_klienta)
+  );
+
+CREATE TABLE PolaczaniePizzaZamowienie(
+  id_klienta int NOT NULL,
+  id_pizzy int NOT NULL,
+  ilosc int NOT NULL,
+  FOREIGN KEY (id_zamowienia) REFERENCES Zamowienia(id_zamowienia),
+  FOREIGN KEY (id_pizzy) REFERENCES Pizze(id_pizzy)
+  );
+
+
+
+CREATE OR REPLACE FUNCTION czyscZamowienia() AS $$
+BEGIN
+    DELETE FROM PolaczeniePizzaZamowienie WHERE id_zamowienia IN (SELECT id_zamowienia FROM Zamowienia WHERE udane = false);
+    DELETE FROM Zamowienia WHERE udane = false;
+END;
+$$ LANGUAGE plpsql;
+
+
+
+
+CREATE OR REPLACE FUNCTION sprawdzSkladniki(id integer) RETURNS boolean AS $$
+DECLARE
+    ileBrakuje integer;
+BEGIN
+ileBrakuje = SELEC COUNT(Zamowienia.id_zamowienia) FROM Zamowienia JOIN PolaczeniePizzaZamowienie JOIN Pizza JOIN PolaczeniePizzaSkladniki                          JOIN Skladniki WHERE PolaczeniePizzaZamowienie.ilosc * PolaczeniePizzaSkladnik.ilosc > Skladniki.ilos AND                                  Zamowienia.id_zamowienia= id;
+    RETURN ileBrakuje = 0;
+END;
+$$ LANGUAGE plpsql;
+
+
+CREATE OR REPLACE FUNCTION uczynZamowienie(id integer) RETURN boolean AS $$
+DEACLARE
+    daSie boolean;
+BEGIN
+    dasie = sprawdzSkladniki(id);
+    IF daSie   THEN
+        FOR rec IN (SELECT PolaczeniePizzaZamowienie.ilosc * PolaczeniePizzaSkladniki.ilosc AS iloscZuzytych, Skladnik.id_skladnika AS                      id_skladnika FROM Skladniki JOIN PolaczenieSkladnikPizza JOIN Pizze JOIN PolaczeniePizzaZamowienie JOIN Zamowienia WHERE                  Zamowienia.id_zamowienia = id)
+        LOOP
+            UPDATE Sladniki SET ilosc = ilosc - rec.iloscZuzytych WHERE id_zkladnika = rec.id_skladnika;
+        END LOOP;
+    END IF;
+    RETURN daSie;
+END;
+$$ LANGUAGE plpsql;
+

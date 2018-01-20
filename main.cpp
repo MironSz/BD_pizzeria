@@ -1,6 +1,45 @@
 #include <iostream>
+#include <pqxx/pqxx>
 
-int main() {
-    std::cout << "Hello, World!" << std::endl;
-    return 0;
+using namespace std;
+using namespace pqxx;
+
+string readFile(string name) {
+    std::ifstream t;
+    t.open(name);
+    std::string buffer;
+    std::string line;
+    while(line){
+        std::getline(t, line);
+        buffer+=line;
+    }
+    t.close();
+    return buffer;
+}
+
+int main(int argc, char *argv[]) {
+    char dbname = "bd";
+    char user = "ms383504";
+    char password = "x";
+    char hostadrr = "127.0.0.1";
+    char port = "5432";
+    try {
+        connection C("dbname = " + dbname + " user = " + user + " password = " + password + " hostaddr = " + hostadrr +
+                     " port = " + port);
+        if (C.is_open()) {
+            cout << "Opened database successfully: " << C.dbname() << endl;
+        } else {
+            cout << "Can't open database" << endl;
+            return 1;
+        }
+    }
+    catch (const std::exception &e) {
+        cerr << e.what() << std::endl;
+        return 1;
+    }
+
+    work W(C);
+    W.exec(readFile("drop_tables.txt"));
+    W.commit();
+    C.disconnect();
 }
