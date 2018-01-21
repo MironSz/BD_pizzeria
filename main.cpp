@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
     string  dbname = "bd";
     string user = "ms383504";
     string password = "x";
-    string hostadrr = "127.0.0.1";
+    string hostadrr = "10.1.0.5";
     string port = "5432";
     try {
         connection C("dbname = " + dbname + " user = " + user + " password = " + password + " hostaddr = " + hostadrr +
