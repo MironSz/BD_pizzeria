@@ -6,10 +6,10 @@ using namespace std;
 using namespace pqxx;
 
 string readFile(string name) {
-    std::ifstream t;
-    t.open(name);
-    std::string buffer;
-    std::string line;
+    ifstream t;
+    t.open(&name[0]);
+    string buffer;
+    string line;
     while( std::getline(t, line)){
         buffer+=line;
     }
