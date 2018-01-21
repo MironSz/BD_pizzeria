@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
             return 1;
         }
         work W(C);
-        W.exec(readFile("drop_tables.txt"));
+        W.exec(readFile("scheme.txt"));
         W.commit();
         C.disconnect();
     }
