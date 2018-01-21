@@ -1,4 +1,4 @@
-DROP TABLE PolaczeniePizzaSkladnik;
+DROP TABLE PolaczenieSkladnikPizza;
 DROP TABLE PolaczaniePizzaZamowienie;
 DROP TABLE Pizza;
 DROP TABLE Skladnik;
