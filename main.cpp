@@ -10,12 +10,32 @@ string readFile(string name) {
     t.open(&name[0]);
     string buffer;
     string line;
-    while( std::getline(t, line)){
+    while(std::getline(t, line)){
         buffer+=line;
     }
     t.close();
     return buffer;
 }
+bool customerExists(int customer){
+    return true;//TODO
+}
+void beginNewOrder(int customer){
+    //Stworz zamowienie z udane = false
+}
+
+bool addPizzaToOrder(int pizzaId, int n){
+    //dodaj nowe polacznie sprawdz czy starcza, ew usun polaczenie
+}
+
+int finishOrder(){
+    //tylko zmien skladniki i zrob commit
+}
+
+void ingredientsDeliver(list<pair<int,string>> deliver){
+    //dodaj skladniki
+}
+
+
 
 int main(int argc, char *argv[]) {
     string  dbname = "bd";
