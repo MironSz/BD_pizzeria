@@ -1,7 +1,9 @@
-# cmake_minimum_required(VERSION <specify CMake version here>)
-project(BD_pizzeria)
+cmake_minimum_required(VERSION 3.5)
+project(bd)
+
 
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -I/usr/local/include  -lpqxx -lpq")
-
-add_executable(BD_pizzeria main.cpp)
+set(CMAKE_CXX_FLAGS)
+set(SOURCE_FILES main.cpp main.cpp)
+add_executable(bd ${SOURCE_FILES})
+target_link_libraries(bd pq pqxx)
