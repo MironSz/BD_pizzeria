@@ -76,10 +76,16 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION uczynZamowienie(id integer) RETURNS boolean AS $$
 DECLARE
     daSie boolean;
+    rec record;
 BEGIN
     dasie = sprawdzSkladniki(id);
     IF daSie   THEN
-        FOR rec IN (SELECT PolaczeniePizzaZamowienie.ilosc * PolaczeniePizzaSkladnik.ilosc AS iloscZuzytych, Skladnik.id_skladnika AS                      id_skladnika FROM Skladnik JOIN PolaczeniePizzaSkladnik JOIN Pizza JOIN PolaczeniePizzaZamowienie JOIN Zamowienie WHERE                  Zamowienie.id_zamowienia = id)
+        FOR rec IN (SELECT PolaczeniePizzaZamowienie.ilosc * PolaczeniePizzaSkladnik.ilosc AS iloscZuzytych, Skladnik.id_skladnika AS                      id_skladnika FROM Skladnik JOIN PolaczeniePizzaSkladnik 
+                 ON SKladnik.id_skladnika = PolaczeniePizzaSkladnik.id_skladnika JOIN Pizza
+                 ON Pizza.id_pizzy = PolaczeniePizzaSkladnik.id_pizzy JOIN PolaczeniePizzaZamowienie
+                 ON Pizza.id_pizzy = PolaczeniePizzaZamowienie.id_pizzy JOIN Zamowienie
+                 ON PolaczeniePizzaZamowienie.id_zamowienia = Zamowienie.id_pizzy 
+                 WHERE Zamowienie.id_zamowienia = id)
         LOOP
             UPDATE Skladnik SET ilosc = ilosc - rec.iloscZuzytych WHERE id_zkladnika = rec.id_skladnika;
         END LOOP;
