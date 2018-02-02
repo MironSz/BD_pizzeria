@@ -45,7 +45,9 @@ CREATE TABLE PolaczaniePizzaZamowienie(
   FOREIGN KEY (id_pizzy) REFERENCES Pizza(id_pizzy)
   );
 
-CREATE OR REPLACE FUNCTION czyscZamowienia() AS $$
+
+
+CREATE OR REPLACE FUNCTION czyscZamowienia() RETURNS void AS $$
 BEGIN
     DELETE FROM PolaczeniePizzaZamowienie WHERE id_zamowienia IN (SELECT id_zamowienia FROM Zamowienie WHERE udane = false);
     DELETE FROM Zamowienie WHERE udane = false;
@@ -59,7 +61,7 @@ CREATE OR REPLACE FUNCTION sprawdzSkladniki(id integer) RETURNS boolean AS $$
 DECLARE
     ileBrakuje integer;
 BEGIN
-ileBrakuje = SELECT COUNT(Zamowienie.id_zamowienia) FROM Zamowienie JOIN PolaczeniePizzaZamowienie JOIN Pizza JOIN PolaczeniePizzaSkladniki                          JOIN Skladniki WHERE PolaczeniePizzaZamowienie.ilosc * PolaczeniePizzaSkladnik.ilosc > Skladniki.ilos AND                                  Zamowienia.id_zamowienia= id;
+SELECT INTO ileBrakuje COUNT(Zamowienie.id_zamowienia) FROM Zamowienie JOIN PolaczeniePizzaZamowienie JOIN Pizza JOIN PolaczeniePizzaSkladnik             JOIN Skladnik WHERE (PolaczeniePizzaZamowienie.ilosc * PolaczeniePizzaSkladnik.ilosc > Skladnik.ilosc AND                                  Zamowienie.id_zamowienia= id);
     RETURN ileBrakuje = 0;
 END;
 $$ LANGUAGE plpgsql;
@@ -71,7 +73,7 @@ DECLARE
 BEGIN
     dasie = sprawdzSkladniki(id);
     IF daSie   THEN
-        FOR rec IN (SELECT PolaczeniePizzaZamowienie.ilosc * PolaczeniePizzaSkladniki.ilosc AS iloscZuzytych, Skladnik.id_skladnika AS                      id_skladnika FROM Skladniki JOIN PolaczenieSkladnikPizza JOIN Pizze JOIN PolaczeniePizzaZamowienie JOIN Zamowienia WHERE                  Zamowienia.id_zamowienia = id)
+        FOR rec IN (SELECT PolaczeniePizzaZamowienie.ilosc * PolaczeniePizzaSkladnik.ilosc AS iloscZuzytych, Skladnik.id_skladnika AS                      id_skladnika FROM Skladnik JOIN PolaczeniePizzaSkladnik JOIN Pizza JOIN PolaczeniePizzaZamowienie JOIN Zamowienie WHERE                  Zamowienie.id_zamowienia = id)
         LOOP
             UPDATE Skladnik SET ilosc = ilosc - rec.iloscZuzytych WHERE id_zkladnika = rec.id_skladnika;
         END LOOP;
