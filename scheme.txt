@@ -57,11 +57,17 @@ $$ LANGUAGE plpgsql;
 
 
 
-CREATE OR REPLACE FUNCTION sprawdzSkladniki(id integer) RETURNS boolean AS $$
+    CREATE OR REPLACE FUNCTION sprawdzSkladniki(id integer) RETURNS boolean AS $$
 DECLARE
     ileBrakuje integer;
 BEGIN
-SELECT INTO ileBrakuje COUNT(Zamowienie.id_zamowienia) FROM Zamowienie JOIN PolaczeniePizzaZamowienie JOIN Pizza JOIN PolaczeniePizzaSkladnik             JOIN Skladnik WHERE (PolaczeniePizzaZamowienie.ilosc * PolaczeniePizzaSkladnik.ilosc > Skladnik.ilosc AND                                  Zamowienie.id_zamowienia= id);
+SELECT  COUNT(Zamowienie.id_zamowienia) INTO ileBrakuje FROM Zamowienie 
+JOIN PolaczeniePizzaZamowienie on Zamowienie.id_zamowienia = PolaczniePizzaZamowienie.id_zamowienia
+JOIN Pizza.id_pizzy on Zamowienie.id_pizzyy = Pizzy.id_pizzy
+JOIN PolaczeniePizzaSkladnik ON PolaczeniePizzaSkladnik.id_pizzy = Pizza.id_pizzy
+JOIN Skladnik ON PolaczeniePizzaSkladnik.id_skladnika = Skladnik.id_skladnika
+WHERE (PolaczeniePizzaZamowienie.ilosc * PolaczeniePizzaSkladnik.ilosc > Skladnik.ilosc AND                                 Zamowienie.id_zamowienia= id);
+
     RETURN ileBrakuje = 0;
 END;
 $$ LANGUAGE plpgsql;
